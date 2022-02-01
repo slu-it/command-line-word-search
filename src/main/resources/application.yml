@@ -1,0 +1,10 @@
+logging:
+  level:
+    root: WARN
+
+mode: cli
+
+settings:
+  word-list: "german.txt"
+  word-length: 5
+  allow-repeat-letters: true
