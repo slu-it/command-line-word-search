@@ -2,33 +2,43 @@ package de.sluit.wordsearch.model
 
 import org.springframework.core.io.Resource
 
-class WordList private constructor(words: Set<Word>) {
+class WordList private constructor(baseWords: Set<Word>, searchWords: Set<Word>) {
 
-    private val byLength: Map<Int, List<Word>>
+    private val validWords: Set<Word>
+    private val searchWordsByLength: Map<Int, List<Word>>
 
     init {
-        require(words.isNotEmpty()) { "Words list must not be empty!" }
-        byLength = words.groupBy { it.length }
+        require(baseWords.isNotEmpty()) { "Base words set must not be empty!" }
+        require(searchWords.isNotEmpty()) { "Search words set must not be empty!" }
+
+        validWords = baseWords + searchWords
+        searchWordsByLength = searchWords.groupBy { it.length }
     }
 
-    fun getRandomOfLength(length: Int): Word? = byLength[length]?.random()
-    fun contains(word: Word): Boolean = byLength[word.length]?.contains(word) ?: false
-    fun countWithLength(length: Int): Int = byLength[length]?.size ?: 0
+    fun getRandomOfLength(length: Int): Word? = searchWordsByLength[length]?.random()
+    fun countWithLength(length: Int): Int = searchWordsByLength[length]?.size ?: 0
+
+    fun exists(word: Word): Boolean = validWords.contains(word)
 
     companion object {
 
-        fun from(resource: Resource, allowRepeatLetters: Boolean): WordList =
-            resource.inputStream.bufferedReader().useLines { from(it, allowRepeatLetters) }
+        fun from(baseWords: Resource, searchWords: Resource, allowRepeatLetters: Boolean): WordList =
+            WordList(baseWords.read(allowRepeatLetters), searchWords.read(allowRepeatLetters))
 
-        fun from(iterable: Sequence<String>, allowRepeatLetters: Boolean): WordList {
-            val words = iterable
+        fun from(baseWords: Sequence<String>, searchWords: Sequence<String>, allowRepeatLetters: Boolean): WordList =
+            WordList(baseWords.read(allowRepeatLetters), searchWords.read(allowRepeatLetters))
+
+        private fun Resource.read(allowRepeatLetters: Boolean): Set<Word> =
+            inputStream.bufferedReader().useLines { lines -> lines.read(allowRepeatLetters) }
+
+        private fun Sequence<String>.read(allowRepeatLetters: Boolean): Set<Word> =
+            map(String::trim)
                 .mapNotNull(Word::tryFrom)
                 .applyRepeatLettersFilter(allowRepeatLetters)
                 .toSet()
-            return WordList(words)
-        }
 
         private fun Sequence<Word>.applyRepeatLettersFilter(allowed: Boolean) =
             filter { if (allowed) true else it.letters.size == it.letters.distinct().size }
+        
     }
 }

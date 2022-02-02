@@ -4,22 +4,24 @@ import de.sluit.wordsearch.model.*
 
 class Game(val solution: Word, val wordList: WordList) {
 
-    private val previousGuesses = mutableListOf<PreviousGuess>()
+    private val guessResults = mutableListOf<GuessResult>()
 
     val wordLength = solution.length
     val maxGuesses = wordLength + 1
 
-    fun guess(guess: Word): GuessResult =
+    fun guess(guess: Word): Answer =
         when {
-            alreadyWon() -> Won(previousGuesses, solution)
-            alreadyLost() -> Lost(previousGuesses, solution)
-            lengthMismatch(guess) -> WrongWordLength(previousGuesses)
-            notOnList(guess) -> NotOnList(previousGuesses)
+            alreadyWon() -> PlayerHasWon(lastGuessResult())
+            alreadyLost() -> PlayerHasLost(lastGuessResult())
+            lengthMismatch(guess) -> WrongLength(guess, wordLength)
+            unknownWord(guess) -> UnknownWord(guess)
             else -> {
-                previousGuesses += compare(guess, solution)
-                if (guess == solution) Won(previousGuesses, solution)
-                else if (alreadyLost()) Lost(previousGuesses, solution)
-                else WrongWord(previousGuesses)
+                val result = compare(guess, solution)
+                guessResults += result
+
+                if (guess == solution) PlayerHasWon(result)
+                else if (alreadyLost()) PlayerHasLost(result)
+                else WrongWord(result)
             }
         }
 
@@ -31,11 +33,12 @@ class Game(val solution: Word, val wordList: WordList) {
                 else -> NotPresent(guessLetter)
             }
         }
-        .let { PreviousGuess(guess, it) }
+        .let { GuessResult(guess, it) }
 
-    private fun alreadyWon(): Boolean = previousGuesses.lastOrNull()?.guess == solution
-    private fun alreadyLost(): Boolean = previousGuesses.size >= maxGuesses
+    private fun alreadyWon(): Boolean = guessResults.lastOrNull()?.guess == solution
+    private fun alreadyLost(): Boolean = guessResults.size >= maxGuesses
     private fun lengthMismatch(guess: Word): Boolean = solution.length != guess.length
-    private fun notOnList(guess: Word): Boolean = !wordList.contains(guess)
+    private fun unknownWord(guess: Word): Boolean = !wordList.exists(guess)
 
+    private fun lastGuessResult() = guessResults.last()
 }

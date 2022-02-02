@@ -8,39 +8,31 @@ internal class GameTests {
 
     @Test
     fun abc() {
-        val wordList = WordList.from(sequenceOf("WORDLE", "ABCDEF"), false)
+        val wordList = WordList.from(sequenceOf("ABCDEF"), sequenceOf("WORDLE"), false)
         val word = Word("WORDLE")
         val game = Game(word, wordList)
 
-        val firstGuess = Word("ABCDEF")
-        val firstGuessResult = PreviousGuess(
-            letterResults = listOf(
-                NotPresent('A'),
-                NotPresent('B'),
-                NotPresent('C'),
-                CorrectPlace('D'),
-                IncorrectPlace('E'),
-                NotPresent('F'),
-            ),
-            guess = firstGuess
+        val guess1 = Word("ABCDEF")
+        val letterResults1 = listOf(
+            NotPresent('A'),
+            NotPresent('B'),
+            NotPresent('C'),
+            CorrectPlace('D'),
+            IncorrectPlace('E'),
+            NotPresent('F'),
         )
 
-        val secondGuess = Word("WORDLE")
-        val secondGuessResult = PreviousGuess(
-            letterResults = listOf(
-                CorrectPlace('W'),
-                CorrectPlace('O'),
-                CorrectPlace('R'),
-                CorrectPlace('D'),
-                CorrectPlace('L'),
-                CorrectPlace('E'),
-            ),
-            guess = secondGuess
+        val guess2 = Word("WORDLE")
+        val letterResults2 = listOf(
+            CorrectPlace('W'),
+            CorrectPlace('O'),
+            CorrectPlace('R'),
+            CorrectPlace('D'),
+            CorrectPlace('L'),
+            CorrectPlace('E'),
         )
 
-        assertThat(game.guess(firstGuess))
-            .isEqualTo(WrongWord(listOf(firstGuessResult)))
-        assertThat(game.guess(secondGuess))
-            .isEqualTo(Won(listOf(firstGuessResult, secondGuessResult), word))
+        assertThat(game.guess(guess1)).isEqualTo(WrongWord(guess1, letterResults1))
+        assertThat(game.guess(guess2)).isEqualTo(PlayerHasWon(guess2, letterResults2))
     }
 }

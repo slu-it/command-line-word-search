@@ -13,8 +13,9 @@ class ApplicationConfiguration(
     @Bean
     fun wordList(): WordList =
         WordList.from(
-            resource = ClassPathResource("/wordlists/${settings.wordList}"),
-            allowRepeatLetters = settings.allowRepeatLetters
+            baseWords = ClassPathResource("/wordlists/${settings.language.baseWords}"),
+            searchWords = ClassPathResource("/wordlists/${settings.language.searchWords}"),
+            allowRepeatLetters = settings.game.allowRepeatLetters
         )
 
 }

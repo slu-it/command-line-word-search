@@ -6,7 +6,20 @@ import org.springframework.boot.context.properties.ConstructorBinding
 @ConstructorBinding
 @ConfigurationProperties("settings")
 data class ApplicationSettings(
-    val wordList: String,
-    val wordLength: Int,
-    val allowRepeatLetters: Boolean
-)
+    val language: LangaugeSettings,
+    val game: GameSettings
+) {
+
+    @ConstructorBinding
+    data class LangaugeSettings(
+        val baseWords: String,
+        val searchWords: String
+    )
+
+    @ConstructorBinding
+    data class GameSettings(
+        val wordLength: Int,
+        val allowRepeatLetters: Boolean
+    )
+
+}

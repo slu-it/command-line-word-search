@@ -20,6 +20,11 @@ const val ANSI_PURPLE_BACKGROUND = "\u001B[45m"
 const val ANSI_CYAN_BACKGROUND = "\u001B[46m"
 const val ANSI_WHITE_BACKGROUND = "\u001B[47m"
 
-fun red(value: Char): String = ANSI_RED + value + ANSI_RESET
-fun yellow(value: Char): String = ANSI_YELLOW + value + ANSI_RESET
-fun green(value: Char): String = ANSI_GREEN + value + ANSI_RESET
+fun red(value: Char): String = red("$value")
+fun red(value: String): String = ANSI_RED + value + ANSI_RESET
+
+fun yellow(value: Char): String = yellow("$value")
+fun yellow(value: String): String = ANSI_YELLOW + value + ANSI_RESET
+
+fun green(value: Char): String = green("$value")
+fun green(value: String): String = ANSI_GREEN + value + ANSI_RESET

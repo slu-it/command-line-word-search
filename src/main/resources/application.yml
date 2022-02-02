@@ -5,6 +5,9 @@ logging:
 mode: cli
 
 settings:
-  word-list: "german.txt"
-  word-length: 5
-  allow-repeat-letters: true
+  language:
+    base-words: german.txt
+    search-words: german-nouns.txt
+  game:
+    allow-repeat-letters: true
+    word-length: 5
