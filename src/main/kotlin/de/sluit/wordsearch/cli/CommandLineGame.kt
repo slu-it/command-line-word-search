@@ -32,6 +32,7 @@ class CommandLineGame(
 
         var playing = true
         while (playing) {
+            print("> ")
             val input = readLine() ?: return
             val word = Word.tryFrom(input)
             if (word != null) {
