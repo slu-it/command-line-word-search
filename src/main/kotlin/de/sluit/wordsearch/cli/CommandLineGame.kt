@@ -56,17 +56,19 @@ class CommandLineGame(
         }
 
     private fun handle(answer: PlayerHasWon): Boolean {
-        println("""${format(answer.letterResults)} is the word! ${green("You've won!")}""")
+        println("${format(answer.letterResults)} is the word!")
+        println(green("You've won!"))
         return false
     }
 
     private fun handle(answer: PlayerHasLost): Boolean {
-        println("""${format(answer.letterResults)} isn't the word! ${red("You've lost!")}""")
+        println("${format(answer.letterResults)} isn't the word!")
+        println(red("You've lost!"))
         return false
     }
 
     private fun handle(answer: WrongWord): Boolean {
-        println("""${format(answer.letterResults)} isn't the word!""")
+        println("${format(answer.letterResults)} isn't the word!")
         return true
     }
 
